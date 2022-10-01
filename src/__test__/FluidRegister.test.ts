@@ -56,3 +56,12 @@ it("merges idempotently", () => {
   expect(c.value).toEqual(d.value);
   expect(c.value).toEqual(e.value);
 });
+
+it("JSON encodes and decodes", () => {
+  const a = FluidRegister.create(1);
+
+  const aEncoded = JSON.stringify(a.toJSON());
+  const aDecoded = FluidRegister.fromJSON(JSON.parse(aEncoded));
+
+  expect(a.equals(aDecoded)).toBeTruthy();
+});

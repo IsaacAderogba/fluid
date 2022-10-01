@@ -1,6 +1,7 @@
+import isEqual from "lodash.isequal";
 import { v1 as uuid } from "uuid";
 import { Replicable } from "./Interfaces";
-import { RequiredKeys } from "./types";
+import { Any, RequiredKeys } from "./types";
 
 type Entry<T> = {
   id: string;
@@ -16,9 +17,9 @@ const createEntry = <T>({
 
 export class FluidRegister<T> implements Replicable<FluidRegister<T>> {
   static create = <T>(value: T) => new FluidRegister({ value });
-  static fromJSON = <T>(entry: Entry<T>) => new FluidRegister(entry);
+  static fromJSON = <T = Any>(entry: Entry<T>) => new FluidRegister(entry);
 
-  entry: Entry<T>;
+  private entry: Entry<T>;
   private constructor(entry: RequiredKeys<Entry<T>, "value">) {
     this.entry = createEntry(entry);
   }
@@ -31,7 +32,7 @@ export class FluidRegister<T> implements Replicable<FluidRegister<T>> {
     this.entry = createEntry({ value });
   }
 
-  isOrdered<E>({ entry }: FluidRegister<E>): boolean {
+  private isOrdered<E>({ entry }: FluidRegister<E>): boolean {
     if (this.entry.timestamp !== entry.timestamp) {
       return this.entry.timestamp > entry.timestamp;
     }
@@ -43,5 +44,11 @@ export class FluidRegister<T> implements Replicable<FluidRegister<T>> {
     return this.isOrdered(other) ? this : other;
   }
 
-  toJSON = () => this.entry;
+  equals(other: FluidRegister<T>): boolean {
+    return isEqual(this.entry, other.entry);
+  }
+
+  toJSON() {
+    return this.entry;
+  }
 }
