@@ -2,7 +2,7 @@ import { FluidRegister } from "src/FluidRegister";
 import { expect, it } from "vitest";
 
 it("Properly assigns register values", () => {
-  const a = new FluidRegister(1);
+  const a = FluidRegister.create(1);
   expect(a.value).toEqual(1);
 
   a.value = 2;
@@ -10,16 +10,16 @@ it("Properly assigns register values", () => {
 });
 
 it("merges values", () => {
-  const a = new FluidRegister(1);
-  const b = new FluidRegister(2);
+  const a = FluidRegister.create(1);
+  const b = FluidRegister.create(2);
 
   const c = a.merged(b);
   expect(c.value).toEqual(b.value);
 });
 
 it("merges with last change wins strategy based on timestamp", async () => {
-  const a = new FluidRegister(1);
-  const b = new FluidRegister(2);
+  const a = FluidRegister.create(1);
+  const b = FluidRegister.create(2);
 
   await new Promise((resolve) => setTimeout(resolve, 1));
   a.value = 3;
@@ -28,9 +28,9 @@ it("merges with last change wins strategy based on timestamp", async () => {
 });
 
 it("merges associatively", () => {
-  const a = new FluidRegister(1);
-  const b = new FluidRegister(2);
-  const c = new FluidRegister(3);
+  const a = FluidRegister.create(1);
+  const b = FluidRegister.create(2);
+  const c = FluidRegister.create(3);
 
   const e = a.merged(b).merged(c);
   const f = a.merged(b.merged(c));
@@ -38,8 +38,8 @@ it("merges associatively", () => {
 });
 
 it("merges commutatively", () => {
-  const a = new FluidRegister(1);
-  const b = new FluidRegister(2);
+  const a = FluidRegister.create(1);
+  const b = FluidRegister.create(2);
 
   const c = a.merged(b);
   const d = b.merged(a);
@@ -47,8 +47,8 @@ it("merges commutatively", () => {
 });
 
 it("merges idempotently", () => {
-  const a = new FluidRegister(1);
-  const b = new FluidRegister(2);
+  const a = FluidRegister.create(1);
+  const b = FluidRegister.create(2);
 
   const c = a.merged(b);
   const d = c.merged(b);

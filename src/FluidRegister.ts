@@ -1,42 +1,47 @@
 import { v1 as uuid } from "uuid";
-import { Replicable } from "./Replicable";
+import { Replicable } from "./Interfaces";
+import { RequiredKeys } from "./types";
 
-class Entry<T> {
-  id = uuid();
-  timestamp = Date.now();
+type Entry<T> = {
+  id: string;
+  timestamp: number;
   value: T;
+};
 
-  constructor(value: T) {
-    this.value = value;
+const createEntry = <T>({
+  id = uuid(),
+  timestamp = Date.now(),
+  value,
+}: RequiredKeys<Entry<T>, "value">) => ({ id, timestamp, value });
+
+export class FluidRegister<T> implements Replicable<FluidRegister<T>> {
+  static create = <T>(value: T) => new FluidRegister({ value });
+  static fromJSON = <T>(entry: Entry<T>) => new FluidRegister(entry);
+
+  entry: Entry<T>;
+  private constructor(entry: RequiredKeys<Entry<T>, "value">) {
+    this.entry = createEntry(entry);
   }
 
-  isOrdered<E>({ timestamp, id }: Entry<E>): boolean {
-    if (this.timestamp !== timestamp) {
-      return this.timestamp > timestamp;
-    }
-
-    return this.id > id;
-  }
-}
-
-export class FluidRegister<T>
-  implements Replicable<FluidRegister<T>>
-{
-  private entry: Entry<T>;
-
-  constructor(input: T) {
-    this.entry = new Entry(input);
-  }
-
-  get value() {
+  get value(): T {
     return this.entry.value;
   }
 
-  set value(input: T) {
-    this.entry = new Entry(input);
+  set value(value: T) {
+    this.entry = createEntry({ value });
+  }
+
+  isOrdered<E>({ entry }: FluidRegister<E>): boolean {
+    if (this.entry.timestamp !== entry.timestamp) {
+      return this.entry.timestamp > entry.timestamp;
+    }
+
+    return this.entry.id > entry.id;
   }
 
   merged(other: FluidRegister<T>): FluidRegister<T> {
-    return this.entry.isOrdered(other.entry) ? this : other;
+    return this.isOrdered(other) ? this : other;
   }
+
+  toJSON = () => this.entry;
 }
