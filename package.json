@@ -55,5 +55,8 @@
     "*.{js,ts,tsx}": [
       "eslint --fix"
     ]
+  },
+  "dependencies": {
+    "uuid": "^9.0.0"
   }
 }

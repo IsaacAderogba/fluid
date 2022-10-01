@@ -10,4 +10,8 @@ module.exports = defineConfig({
       formats: ["es", "cjs"],
     },
   },
+  test: {
+    setupFiles: ["./test/setup.ts"],
+    outputDiffLines: 100
+  },
 });
