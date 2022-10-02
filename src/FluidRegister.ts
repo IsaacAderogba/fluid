@@ -1,6 +1,6 @@
 import isEqual from "lodash.isequal";
 import { v1 as uuid } from "uuid";
-import { Replicable } from "./Interfaces";
+import { FluidType } from "./Interfaces";
 import { Any, RequiredKeys } from "./types";
 
 type Entry<T> = {
@@ -15,7 +15,7 @@ const createEntry = <T>({
   value,
 }: RequiredKeys<Entry<T>, "value">) => ({ id, timestamp, value });
 
-export class FluidRegister<T> implements Replicable<FluidRegister<T>> {
+export class FluidRegister<T> implements FluidType<FluidRegister<T>> {
   static create = <T>(value: T) => new FluidRegister({ value });
   static fromJSON = <T = Any>(entry: Entry<T>) => new FluidRegister(entry);
 
