@@ -1,4 +1,4 @@
-import { FluidRegister } from "src/FluidRegister";
+import { FluidRegister } from "../FluidRegister";
 import { expect, it } from "vitest";
 
 it("Properly assigns register values", () => {

@@ -1,6 +1,6 @@
 import isEqual from "lodash.isequal";
 import { v1 as uuid } from "uuid";
-import { FluidType } from "./Interfaces";
+import { FluidType } from "./FluidType";
 import { Any, RequiredKeys } from "./types";
 
 type Entry<T> = {
@@ -15,12 +15,13 @@ const createEntry = <T>({
   value,
 }: RequiredKeys<Entry<T>, "value">) => ({ id, timestamp, value });
 
-export class FluidRegister<T> implements FluidType<FluidRegister<T>> {
+export class FluidRegister<T> extends FluidType<FluidRegister<T>> {
   static create = <T>(value: T) => new FluidRegister({ value });
   static fromJSON = <T = Any>(entry: Entry<T>) => new FluidRegister(entry);
 
   private entry: Entry<T>;
   private constructor(entry: RequiredKeys<Entry<T>, "value">) {
+    super()
     this.entry = createEntry(entry);
   }
 

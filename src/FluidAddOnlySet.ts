@@ -1,15 +1,16 @@
 import isEqual from "lodash.isequal";
-import { FluidType } from "./Interfaces";
+import { FluidType } from "./FluidType";
 import { Any } from "./types";
 
-export class FluidAddOnlySet<T> implements FluidType<FluidAddOnlySet<T>> {
-  static create = <T>(entries?: Set<T>) => new FluidAddOnlySet(entries);
+export class FluidAddOnlySet<T> extends FluidType<FluidAddOnlySet<T>> {
+  static create = <T>(entries?: T[]) => new FluidAddOnlySet(entries);
   static fromJSON = <T = Any>(entries: T[]) =>
-    new FluidAddOnlySet(new Set(entries));
+    new FluidAddOnlySet(entries);
 
   private entries: Set<T>;
-  private constructor(entries = new Set<T>()) {
-    this.entries = entries;
+  private constructor(entries: T[] = []) {
+    super()
+    this.entries = new Set(entries);
   }
 
   get values(): Set<T> {
@@ -25,8 +26,7 @@ export class FluidAddOnlySet<T> implements FluidType<FluidAddOnlySet<T>> {
   }
 
   merged(other: FluidAddOnlySet<T>): FluidAddOnlySet<T> {
-    const set = new Set([...this.entries, ...other.entries]);
-    return new FluidAddOnlySet(set);
+    return new FluidAddOnlySet([...this.entries, ...other.entries]);
   }
 
   toJSON() {
